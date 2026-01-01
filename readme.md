@@ -27,23 +27,17 @@ At a high level, MaatNews aims to:
 
 ---
 
+```markdown
 ## 🏗️ High-Level Architecture
 
-RSS Feeds / News APIs
-│
-▼
-AWS Lambda (Ingestion Pipelines)
-│
-├── Deduplication Check (DynamoDB)
-│
-▼
-Amazon S3 (Raw JSON)
-│
-▼
-Databricks (Transform & Analyze)
-│
-▼
-Dashboards / LLM-based Insights (Future)
+```mermaid
+flowchart TD
+    A[RSS Feeds / News APIs]
+    A --> B[AWS Lambda (Ingestion Pipelines)]
+    B --> C[Deduplication Check (DynamoDB)]
+    C --> D[Amazon S3 (Raw JSON)]
+    D --> E[Databricks (Transform & Analyze)]
+    E --> F[Dashboards / LLM-based Insights (Future)]
 
 
 ---
