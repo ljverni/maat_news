@@ -1,4 +1,4 @@
-from utils import rss_extract_type_a
+from utils import rss_extract_type_a, s3_loader
 import logging
 from datetime import datetime
 
@@ -17,11 +17,7 @@ def lambda_handler(event, context):
         records = rss_extract_type_a.main(source_id, rss_url)
 
         for file in records:
-            file_id = file['id']
-            article_url = file['url']
-            published_at_date = datetime.strptime(file['published_at'][:10], "%Y-%m-%d")
- 
-            print(article_url)
+            s3_loader.load(file, source_id)
 
         logger.info("Extraction completed")
     except Exception as e:
