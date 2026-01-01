@@ -41,11 +41,11 @@ At a high level, MaatNews aims to:
 ```mermaid
 flowchart TD
     A[RSS Feeds / News APIs]
-    A --> B[AWS Lambda<br/>(Ingestion Pipelines)]
-    B --> C[DynamoDB<br/>(Deduplication & Catalog)]
-    C --> D[Amazon S3<br/>(Raw JSON)]
-    D --> E[Databricks<br/>(Transform & Analyze)]
-    E --> F[Dashboards / LLM-based Insights<br/>(Future)]
+    A --> B["AWS Lambda\nIngestion Pipelines"]
+    B --> C["DynamoDB\nDeduplication & Catalog"]
+    C --> D["Amazon S3\nRaw JSON"]
+    D --> E["Databricks\nTransform & Analyze"]
+    E --> F["Dashboards / LLM-based Insights\n(Future)"]
 ```
 
 ---
