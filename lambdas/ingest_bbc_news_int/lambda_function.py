@@ -1,6 +1,5 @@
 from utils import rss_extract_type_a, s3_loader
 import logging
-from datetime import datetime
 
 # Configure logging
 logger = logging.getLogger()

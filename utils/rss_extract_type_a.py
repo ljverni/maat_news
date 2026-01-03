@@ -2,8 +2,6 @@ import feedparser
 import requests
 from datetime import datetime, timezone
 import hashlib
-import json
-from utils import build_raw_structure
 
 ## TESTING VARIABLES
 rss_url = "https://feeds.bbci.co.uk/news/rss.xml?edition=int"

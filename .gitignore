@@ -2,4 +2,6 @@ venv/
 package/
 *.zip
 .env
-*__pycache__/
+__pycache__/
+*.pyc
+package_lambda.ps1

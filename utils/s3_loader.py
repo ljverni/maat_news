@@ -27,7 +27,14 @@ def load(data, source_id):
     s3_client = get_s3_client()
 
     try:
-        published_at_date = datetime.strptime(data['published_at'][:10], "%Y-%m-%d")
+        published_at = data.get("published_at")
+
+        if published_at:
+            published_at_date = datetime.strptime(published_at[:10], "%Y-%m-%d")
+        else:
+            published_at_date = datetime.now()
+
+        
         article_id = data['id']
 
         file_path = f"raw/{source_id}/{published_at_date.year}/{published_at_date.month:02}/{published_at_date.day:02}/{article_id}.json"
