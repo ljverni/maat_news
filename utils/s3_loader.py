@@ -43,7 +43,7 @@ def load(data, source_id):
         s3_client.put_object(
             Bucket=os.getenv("S3_BUCKET"),
             Key=file_path,
-            Body=json.dumps(data),
+            Body=json.dumps(data, ensure_ascii=False).encode("utf-8"),
         )
 
     except Exception as e:

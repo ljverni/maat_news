@@ -14,7 +14,7 @@ def lambda_handler(event, context):
 
     try:
         records = rss_extract_type_a.main(source_id, rss_url)
-        for file in records:
+        for file in records[:2]:
             s3_loader.load(file, source_id)
 
         logger.info("Extraction completed")
