@@ -1,0 +1,76 @@
+name: Deploy Changed Lambdas
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
+
+jobs:
+  detect-changes:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      lambdas: ${{ steps.set-matrix.outputs.lambdas }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed lambda folders
+        id: set-matrix
+        run: |
+          CHANGED=$(git diff --name-only origin/main~1 HEAD \
+            | grep '^lambdas/' \
+            | cut -d/ -f2 \
+            | sort -u \
+            | jq -R -s -c 'split("\n")[:-1]')
+
+          # Deploy all if utils/ changed
+          if git diff --name-only origin/main~1 HEAD | grep -q '^utils/'; then
+            CHANGED=$(ls lambdas | jq -R -s -c 'split("\n")[:-1]')
+          fi
+
+          echo "Changed lambdas: $CHANGED"
+          echo "lambdas=$CHANGED" >> $GITHUB_OUTPUT
+
+  deploy:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.lambdas != '[]'
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        lambda: ${{ fromJson(needs.detect-changes.outputs.lambdas) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Build Lambda ${{ matrix.lambda }}
+        run: |
+          mkdir -p package
+          pip install -r requirements.txt -t package
+
+          cp lambdas/${{ matrix.lambda }}/lambda_function.py package/
+          cp -r utils package/
+
+      - name: Zip Lambda
+        run: |
+          cd package
+          zip -r ../${{ matrix.lambda }}.zip .
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy Lambda ${{ matrix.lambda }}
+        run: |
+          aws lambda update-function-code \
+            --function-name ${{ matrix.lambda }} \
+            --zip-file fileb://${{ matrix.lambda }}.zip
