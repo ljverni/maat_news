@@ -39,9 +39,7 @@ def load(data, source_id):
 
         file_path = f"raw/{source_id}/{published_at_date.year}/{published_at_date.month:02}/{published_at_date.day:02}/{article_id}.json"
 
-        print(f"Uploading article {article_id} data type: {type(data)}")
-        print(f"Data content keys: {list(data.keys())}")
-        
+
         s3_client.put_object(
             Bucket=os.getenv("S3_BUCKET"),
             Key=file_path,
